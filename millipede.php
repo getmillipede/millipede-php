@@ -10,15 +10,16 @@ function millipede($size)
 {
     $size = filter_var($size, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'default' => 20]]);
     $paddingOffsets = ['  ', ' ', '', ' ', '  ', '   ', '    ', '   '];
-    $milli = ['    ╚⊙ ⊙╝'];
+    yield '    ╚⊙ ⊙╝';
     $i = 0;
     do {
-        $milli[] = $paddingOffsets[++$i % 8] . '╚═(███)═╝';
+        yield $paddingOffsets[++$i % 8].'╚═(███)═╝';
     } while ($i < $size);
-
-    return PHP_EOL.implode(PHP_EOL, $milli).PHP_EOL;
 }
 
 $size = isset($argv[1]) ? $argv[1] : 20;
-echo millipede($size);
+echo PHP_EOL;
+foreach (millipede($size) as $output) {
+    echo $output.PHP_EOL;
+}
 die(0);
