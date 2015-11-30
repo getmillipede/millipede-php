@@ -1,0 +1,19 @@
+{
+    "name": "millipede/millipede",
+    "type" : "website",
+    "description" : "millipede the PHP way",
+    "keywords": ["millipede"],
+    "license": "MIT",
+    "homepage" : "http://millipede.io",
+    "support": {
+        "issues": "https://github.com/getmillipede/millipede-php/issues"
+    },
+    "require": {
+        "php": ">=5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Millipede\\" : "src"
+        }
+    }
+}

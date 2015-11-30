@@ -8,6 +8,12 @@ Print a beautiful millipede
 * [Twitter](https://twitter.com/getmillipede)
 * [#getmillipede](http://webchat.freenode.net?channels=%23getmillipede&uio=d4) on Freenode
 
+## TODO
+
+* DockBlock everything
+* adding Unit Testing
+* adding more options in the [Config class](src/Config.php)
+
 ## License
 
-[MIT](https://github.com/getmillipede/millipede-csharp/blob/master/LICENSE)
+[MIT](LICENSE)
