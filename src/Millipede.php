@@ -4,6 +4,9 @@ namespace Millipede;
 
 use IteratorAggregate;
 
+/**
+ * A class to generate a Millipede in PHP
+ */
 class Millipede implements IteratorAggregate
 {
     /**
@@ -13,32 +16,53 @@ class Millipede implements IteratorAggregate
      */
     protected $config;
 
+    /**
+     * Millipede padding offsets
+     *
+     * @var array
+     */
     protected $paddingOffsets = ['  ', ' ', '', ' ', '  ', '   ', '    ', '   '];
 
+    /**
+     * Millipede header
+     *
+     * @var string
+     */
     protected $head = '╚⊙ ⊙╝';
 
+    /**
+     * Millipede body
+     *
+     * @var string
+     */
     protected $body = '╚═(███)═╝';
 
-    public function __construct(Config $config)
+    /**
+     * a new instance
+     *
+     * @param Config $config
+     */
+    public function __construct(Config $config = null)
     {
-        $this->config = $config;
+        $this->config = $config ?: new Config();
     }
 
-    public function getHead()
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
     {
-        return '    '.$this->head;
+        ob_start();
+        foreach ($this->getIterator() as $part) {
+            echo $part, PHP_EOL;
+        }
+
+        return ob_get_clean();
     }
 
-    public function getBody()
-    {
-        return $this->body;
-    }
-
-    protected function getPadding($i)
-    {
-        return $this->paddingOffsets[$i % 8];
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function getIterator()
     {
         yield $this->config->getComment();
@@ -52,12 +76,35 @@ class Millipede implements IteratorAggregate
         yield '';
     }
 
-    public function __toString()
+    /**
+     * Retrieve the millipede head
+     *
+     * @return string The Millipede head
+     */
+    protected function getHead()
     {
-        ob_start();
-        foreach ($this->getIterator() as $part) {
-            echo $part, PHP_EOL;
-        }
-        return ob_get_clean();
+        return '    '.$this->head;
+    }
+
+    /**
+     * Retrieve the Padding offset depending on the iteration
+     *
+     * @param int $offset
+     *
+     * @return string
+     */
+    protected function getPadding($offset)
+    {
+        return $this->paddingOffsets[$offset % 8];
+    }
+
+    /**
+     * Retrieve the millipede body
+     *
+     * @return string The Millipede head
+     */
+    protected function getBody()
+    {
+        return $this->body;
     }
 }
