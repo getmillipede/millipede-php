@@ -1,4 +1,4 @@
-Millipede PHP
+Millipede PHP [![Build Status](https://travis-ci.org/getmillipede/millipede-php.svg?branch=master)](https://travis-ci.org/getmillipede/millipede-php)
 =================
 
 PHP version of [getmillipede](https://github.com/getmillipede/) with a PHP twist to it.
