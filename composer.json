@@ -1,6 +1,6 @@
 {
     "name": "millipede/millipede",
-    "type" : "website",
+    "type" : "library",
     "description" : "millipede the PHP way",
     "keywords": ["millipede"],
     "license": "MIT",
@@ -9,10 +9,11 @@
         "issues": "https://github.com/getmillipede/millipede-php/issues"
     },
     "require": {
-        "php": ">=5.5"
+        "php": ">=5.5",
+        "ext-mbstring" : "*"
     },
     "require-dev": {
-        "phpunit/phpunit" : "^4.0 || ^5.0",
+        "phpunit/phpunit" : "^4.0",
         "fabpot/php-cs-fixer": "^1.10"
     },
     "autoload": {
@@ -22,11 +23,13 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Millipede\\Test\\": "test"
+            "MillipedeTest\\": "test"
         }
     },
     "scripts": {
-        "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run;"
+        "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run;",
+        "phpunit": "phpunit --coverage-text",
+        "phpcs": "php-cs-fixer fix -v --diff --dry-run;"
     },
     "extra": {
         "branch-alias": {

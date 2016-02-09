@@ -1,6 +1,6 @@
 <?php
 
-namespace Millipede\Test;
+namespace MillipedeTest;
 
 use Millipede\Config;
 use PHPUnit_Framework_TestCase as TestCase;
@@ -19,6 +19,12 @@ class ConfigTest extends TestCase
     {
         $this->assertSame('', $this->config->getComment());
         $this->assertSame(20, $this->config->getSize());
+        $this->assertSame(3, $this->config->getWidth());
+        $this->assertSame(4, $this->config->getCurve());
+        $this->assertSame(' ', $this->config->getHeadBlock());
+        $this->assertSame('█', $this->config->getBodyBlock());
+        $this->assertFalse($this->config->isOpposite());
+        $this->assertFalse($this->config->isReverse());
     }
 
     /**
@@ -52,8 +58,7 @@ class ConfigTest extends TestCase
      */
     public function testSetComment($comment, $expected)
     {
-        $newComment = $this->config->withComment($comment)->getComment();
-        $this->assertSame($expected, $newComment);
+        $this->assertSame($expected, $this->config->withComment($comment)->getComment());
     }
 
     public function providerSetComment()
@@ -70,5 +75,127 @@ class ConfigTest extends TestCase
     public function testSetCommentThrowsException()
     {
         $this->config->withComment(12);
+    }
+
+    /**
+     * @dataProvider providerSetCurve
+     */
+    public function testSetCurve($size, $expected)
+    {
+        $this->assertSame($expected, $this->config->withCurve($size)->getCurve());
+    }
+
+    public function providerSetCurve()
+    {
+        return [
+            '0 size' => [0, 0],
+            'negative size' => [-23, 4],
+            'basic usage' => [23, 23],
+        ];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetCurveThrowsException()
+    {
+        $this->config->withCurve(new StdClass());
+    }
+
+    /**
+     * @dataProvider providerSetWidth
+     */
+    public function testSetWidth($size, $expected)
+    {
+        $this->assertSame($expected, $this->config->withWidth($size)->getWidth());
+    }
+
+    public function providerSetWidth()
+    {
+        return [
+            '0 size' => [0, 3],
+            'negative size' => [-23, 3],
+            'basic usage' => [23, 23],
+        ];
+    }
+
+    /**
+     * @dataProvider providerWithReverse
+     */
+    public function testWithOpposite($size, $expected)
+    {
+        $this->assertSame($expected, $this->config->withOpposite($size)->isOpposite());
+    }
+
+    /**
+     * @dataProvider providerWithReverse
+     */
+    public function testWithReverse($size, $expected)
+    {
+        $this->assertSame($expected, $this->config->withReverse($size)->isReverse());
+    }
+
+    public function providerWithReverse()
+    {
+        return [
+            [true, true],
+            [false, false],
+            [1, true],
+        ];
+    }
+
+    /**
+     * @dataProvider providerChars
+     */
+    public function testWithBodyBlock($char, $expected)
+    {
+        $this->assertSame($expected, $this->config->withBodyBlock($char)->getBodyBlock());
+    }
+
+    /**
+     * @dataProvider providerChars
+     */
+    public function testWithHeadBlock($char, $expected)
+    {
+        $this->assertSame($expected, $this->config->withHeadBlock($char)->getHeadBlock());
+    }
+
+    public function providerChars()
+    {
+        return [
+            ['#', '#'],
+            ["\t", "\t"],
+            ['€', '€'],
+            ['█', '█'],
+            [' ', ' '],
+            ['\uD83D\uDE00', '😀'],
+        ];
+    }
+
+    public function providerInvalidChars()
+    {
+        return [
+            [[]],
+            ['coucou'],
+            [1],
+        ];
+    }
+
+    /**
+     * @dataProvider providerInvalidChars
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithHeadBlockThrowsInvalidArgumentException($input)
+    {
+        $this->config->withHeadBlock($input);
+    }
+
+    /**
+     * @dataProvider providerInvalidChars
+     * @expectedException InvalidArgumentException
+     */
+    public function testWithBodyBlockThrowsInvalidArgumentException($input)
+    {
+        $this->config->withBodyBlock($input);
     }
 }
