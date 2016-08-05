@@ -1,0 +1,108 @@
+#!/usr/bin/env php
+<?php
+
+use Millipede\Cli;
+use Millipede\Millipede;
+use Millipede\Renderer;
+
+if (PHP_SAPI !== 'cli') {
+    die('This script should be invoked via the CLI version of PHP, not the '.PHP_SAPI.' SAPI');
+}
+
+$vendor = dirname(__DIR__).'/vendor';
+if (!is_dir($vendor)) {
+    $vendor = __DIR__.'/../../../../vendor';
+    if (!is_dir($vendor)) {
+        echo Cli::outln('<<redbg white>>You must set up the project dependencies, using composer: <<reset>>');
+        echo Cli::outln('<<green>>Usage: <<reset>>php composer install');
+        echo PHP_EOL;
+        die(65);
+    }
+}
+
+$help = <<<EOF
+
+<<yellow>>NAME:<<reset>>
+   millipede-php - Print a beautiful millipede
+
+<<yellow>>USAGE:<<reset>>
+   millipede-php [options...]
+
+<<yellow>>AUTHOR(S):<<reset>>
+   Millipede crew <https://github.com/getmillipede/millipede-php>
+
+<<yellow>>OPTIONS:<<reset>>
+   <<green>>--reverse, -r<<reset>>  reverse the millipede
+   <<green>>--opposite, -o<<reset>> go the opposite direction
+   <<green>>--skin<<reset>>         millipede skin pattern (one character) <<yellow>>[default: "█"]<<reset>>
+   <<green>>--head<<reset>>         millipede head pattern (one character) <<yellow>>[default: " "]<<reset>>
+   <<green>>--color<<reset>>        millipede color <<yellow>>[default: "white"]<<reset>>
+                  The color options supports the POSIX colors: <<cyan>>'white', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta'<<reset>>
+                  as well as two specific compositions <<cyan>>random, rainbow<<reset>>
+   <<green>>--width<<reset>>        millipede width <<yellow>>[default: 3]<<reset>>
+   <<green>>--size<<reset>>         millipede size <<yellow>>[default: 20]<<reset>>
+   <<green>>--curve<<reset>>        millipede curve size <<yellow>>[default: 4]<<reset>>
+   <<green>>--comment <<reset>>      comment from the millipede <<yellow>>[default: " "]<<reset>>
+   <<green>>--help, -h<<reset>>     show help
+
+EOF;
+
+require $vendor.'/autoload.php';
+
+$millipede = new Millipede();
+
+$options = getopt('hro', [
+    'help', 'reverse', 'opposite',
+    'size:', 'width:', 'curve:',
+    'head:', 'skin:', 'comment:',
+    'color:',
+]);
+
+$default = $millipede->toArray();
+unset($default['reverse'], $default['opposite']);
+
+$arguments = array_replace($default, $options);
+if (isset($arguments['help']) || isset($arguments['h'])) {
+    echo Cli::outln($help);
+    die(0);
+}
+
+try {
+    $millipede = $millipede
+        ->withReverse(isset($arguments['reverse']) || isset($arguments['r']))
+        ->withOpposite(isset($arguments['opposite']) || isset($arguments['o']))
+        ->withSize($arguments['size'])
+        ->withWidth($arguments['width'])
+        ->withCurve($arguments['curve'])
+        ->withHead($arguments['head'])
+        ->withSkin($arguments['skin'])
+        ->withComment($arguments['comment'])
+    ;
+
+    $color = 'white';
+    if (isset($arguments['color'])) {
+        $color = strtolower($arguments['color']);
+        if (strpos($color, ',')) {
+            $color = explode(',', $color);
+        }
+    }
+
+    if ('random' === $color) {
+        $modifier = Cli::createFromRandom();
+    } elseif ('rainbow' === $color) {
+        $modifier = Cli::createFromRainbow();
+    } else {
+        $modifier = new Cli($color);
+    }
+
+    foreach ($modifier(new Renderer($millipede)) as $part) {
+        echo $part;
+    }
+    die(0);
+} catch (Exception $e) {
+    echo Cli::outln("<<reset>>"), PHP_EOL;
+    echo Cli::outln("<<redbg white>>An error occurs while generating the millipede:");
+    echo Cli::outln($e->getMessage().'<<reset>>');
+    echo Cli::outln($help);
+    die(52);
+}
