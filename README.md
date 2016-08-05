@@ -107,6 +107,80 @@ Hello world !
 
 ```
 
+The `Config` class properties are listed below:
+
+```php
+<?php
+
+public function Config::getComment() : string    //return the commented text
+public function Config::getHeadBlock() : string  //return the head block
+public function Config::getBodyBlock() : string  //return the body block
+public function Config::getSize() : int          //return the millipede size
+public function Config::getWidth() : int         //return the millipede width
+public function Config::getCurve() : int         //return the millipede curve
+public function Config::isOpposite(): bool       //tell whether the millipede curve is opposite
+public function Config::isReverse() : bool       //tell whether the millipede is reversed
+```
+
+Modifying the `Config` class properties
+
+To modify/update the class properties you must use the following modifying methods:
+
+```php
+<?php
+
+public function Config::withComment(string $comment) : static
+public function Config::withHeadBlock() : static
+public function Config::withBodyBlock() : static
+public function Config::withSize(int $size): static
+public function Config::withWidth(int $width) : static
+public function Config::withCurve(int $curve) : static
+public function Config::withOpposite(bool $status) : static
+public function Config::withReverse(bool $status) : static
+```
+
+Since the `Config` class is immutable you can chain each modifying methods to simplify Config creation and/or modification.
+
+```php
+<?php
+
+use Millipede\Config;
+
+$config = (new Config())
+    ->withCurve(4)
+    ->withSize(10)
+    ->withComment('Hello World!')
+    ->withOpposite(true)
+    ->withReverse(true)
+    ->withWidth(7)
+    ->withBodyBlock('\uD83D\uDC1F')
+;
+
+echo new Millipede($config);
+
+```
+
+will return
+
+```
+
+ Hello World!
+
+   ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+    ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+   ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+  ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+ ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+ ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+  ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+   ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+    ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
+       ╔⊙     ⊙╗
+
+
+```
+
 Install
 -------
 
