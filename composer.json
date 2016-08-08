@@ -9,7 +9,7 @@
         "issues": "https://github.com/getmillipede/millipede-php/issues"
     },
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.6",
         "ext-mbstring" : "*"
     },
     "require-dev": {
@@ -26,6 +26,9 @@
             "MillipedeTest\\": "test"
         }
     },
+    "bin": [
+        "bin/millipede-php"
+    ],
     "scripts": {
         "test": "phpunit --coverage-text; php-cs-fixer fix -v --diff --dry-run;",
         "phpunit": "phpunit --coverage-text",

@@ -6,7 +6,7 @@ PHP version of [getmillipede](https://github.com/getmillipede/) with a PHP twist
 Highlights
 -------
 
-- Treats Millipede Configuration as Immutable Value Objects
+- Treats Millipede as Immutable Value Objects
 - Fully documented
 - Framework agnostic
 - Composer ready, [PSR-2], and [PSR-4] compliant
@@ -14,18 +14,109 @@ Highlights
 System Requirements
 -------
 
-You need **PHP >= 5.5.0** but the latest stable version of PHP or HHVM is recommended.
+You need **PHP >= 5.6.0** but the latest stable version of PHP or HHVM is recommended.
 
-Usage
+Components
 -------
 
-Creating a simple millipede with its default settings:
+- the PHP millipede CLI ./bin/millipede-php
+- the PHP Library
+
+CLI usage
+-------
+
+```
+$ php millipede-php -h
+
+NAME:
+   millipede-php - Print a beautiful millipede
+
+USAGE:
+   millipede-php [options...]
+
+AUTHOR(S):
+   Millipede crew <https://github.com/getmillipede/millipede-php>
+
+OPTIONS:
+   --reverse, -r  reverse the millipede
+   --opposite, -o go the opposite direction
+   --skin         millipede skin pattern (one character) [default: "█"]
+   --head         millipede head pattern (one character) [default: " "]
+   --color        millipede color [default: "white"]
+                  The color options supports the POSIX colors: 'white', 'red', 'yellow', 'green', 'cyan', 'blue', 'magenta'
+                  as well as two specific compositions random, rainbow
+   --width        millipede width [default: 3]
+   --size         millipede size [default: 20]
+   --curve        millipede curve size [default: 4]
+   --comment       comment from the millipede [default: " "]
+   --help, -h     show help
+```
+
+### Examples
+
+```
+$ php millipede-php --size 10
+
+     ╚⊙ ⊙╝
+  ╚═(███)═╝
+   ╚═(███)═╝
+    ╚═(███)═╝
+     ╚═(███)═╝
+    ╚═(███)═╝
+   ╚═(███)═╝
+  ╚═(███)═╝
+ ╚═(███)═╝
+  ╚═(███)═╝
+   ╚═(███)═╝
+
+```
+
+```
+$ php millipede-php --size 10 -r -o
+
+    ╔═(███)═╗
+     ╔═(███)═╗
+    ╔═(███)═╗
+   ╔═(███)═╗
+  ╔═(███)═╗
+ ╔═(███)═╗
+  ╔═(███)═╗
+   ╔═(███)═╗
+    ╔═(███)═╗
+     ╔═(███)═╗
+        ╔⊙ ⊙╗
+
+```
+
+```
+$ php millipede-php --size 10 -r --curve 0 --color yellow
+
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+ ╔═(███)═╗
+   ╔⊙ ⊙╗
+```
+
+Will appear yellow in a POSIX compliant CLI.
+
+
+Library Usage
+-------
+
+Rendering a simple millipede with its default settings:
 
 ```php
-use Millipede\Millipede;
+use Millipede\Renderer;
 
-$millipede = new Millipede();
-echo $millipede, PHP_EOL;
+$renderer = new Renderer();
+echo $renderer, PHP_EOL;
 ```
 
 will generate the following on a **CLI output**
@@ -57,12 +148,11 @@ will generate the following on a **CLI output**
 Of course you can be more specific in your configuration settings
 
 ```php
-use Millipede\Config;
 use Millipede\Millipede;
+use Millipede\Renderer;
 
-$config = (new Config())->withSize(5)->withComment('Hello world !');
-$millipede = new Millipede($config);
-echo $millipede, PHP_EOL;
+$millipede = (new Millipede())->withSize(5)->withComment('Hello world !');
+echo new Renderer($millipede), PHP_EOL;
 ```
 
 will generate the following on a **CLI output**
@@ -83,13 +173,13 @@ For advance usage if you are requesting bigger size, the `Millipede` object impl
 
 
 ```php
-use Millipede\Config;
 use Millipede\Millipede;
+use Millipede\Renderer;
 
-$config = (new Config())->withSize(5)->withComment('Hello world !');
-$millipede = new Millipede($config);
-foreach ($millipede as $part) {
-	echo $part, PHP_EOL;
+$millipede = (new Millipede())->withSize(5)->withComment('Hello world !');
+$renderer = new Renderer($config);
+foreach ($renderer as $piece) {
+	echo $piece, PHP_EOL;
 }
 ```
 
@@ -107,64 +197,62 @@ Hello world !
 
 ```
 
-The `Config` class properties are listed below:
+The `Millipede` class properties are listed below:
 
 ```php
 <?php
 
-public function Config::getComment() : string    //return the commented text
-public function Config::getHeadBlock() : string  //return the head block
-public function Config::getBodyBlock() : string  //return the body block
-public function Config::getSize() : int          //return the millipede size
-public function Config::getWidth() : int         //return the millipede width
-public function Config::getCurve() : int         //return the millipede curve
-public function Config::isOpposite(): bool       //tell whether the millipede curve is opposite
-public function Config::isReverse() : bool       //tell whether the millipede is reversed
+public function Millipede::getComment() : string //return the commented text
+public function Millipede::getHead() : string    //return the head pattern (a single character)
+public function Millipede::getSkin() : string    //return the body skin pattern (a single character)
+public function Millipede::getSize() : int       //return the millipede size
+public function Millipede::getWidth() : int      //return the millipede width
+public function Millipede::getCurve() : int      //return the millipede curve
+public function Millipede::isOpposite(): bool    //tell whether the millipede curve is opposite
+public function Millipede::isReverse() : bool    //tell whether the millipede is reversed
 ```
 
-Modifying the `Config` class properties
+Modifying the `Millipede` class properties
 
 To modify/update the class properties you must use the following modifying methods:
 
 ```php
 <?php
 
-public function Config::withComment(string $comment) : static
-public function Config::withHeadBlock() : static
-public function Config::withBodyBlock() : static
-public function Config::withSize(int $size): static
-public function Config::withWidth(int $width) : static
-public function Config::withCurve(int $curve) : static
-public function Config::withOpposite(bool $status) : static
-public function Config::withReverse(bool $status) : static
+public function Millipede::withComment(string $comment) : static
+public function Millipede::withHead(string $head) : static //a single character or a Unicode character
+public function Millipede::withSkin(string $skin) : static //a single character or a Unicode character
+public function Millipede::withSize(int $size): static
+public function Millipede::withWidth(int $width) : static
+public function Millipede::withCurve(int $curve) : static
+public function Millipede::withOpposite(bool $status) : static
+public function Millipede::withReverse(bool $status) : static
 ```
 
-Since the `Config` class is immutable you can chain each modifying methods to simplify Config creation and/or modification.
+Since the `Millipede` class is immutable you can chain each modifying methods to simplify Config creation and/or modification.
 
 ```php
 <?php
 
-use Millipede\Config;
+use Millipede\Millipede;
 
-$config = (new Config())
+$millipede = (new Millipede())
     ->withCurve(4)
     ->withSize(10)
-    ->withComment('Hello World!')
+    ->withComment('Chaud devant! Mon beau millepatte doit passer!')
     ->withOpposite(true)
     ->withReverse(true)
     ->withWidth(7)
-    ->withBodyBlock('\uD83D\uDC1F')
+    ->withSkin('\uD83D\uDC1F')
 ;
 
-echo new Millipede($config);
+echo new Renderer($millipede);
 
 ```
 
 will return
 
 ```
-
- Hello World!
 
    ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
     ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
@@ -178,6 +266,7 @@ will return
     ╔═(🐟🐟🐟🐟🐟🐟🐟)═╗
        ╔⊙     ⊙╗
 
+ Chaud devant! Mon beau millepatte doit passer!
 
 ```
 
@@ -226,7 +315,6 @@ License
 -------
 
 [MIT](LICENSE)
-
 
 [PSR-2]: http://www.php-fig.org/psr/psr-2/
 [PSR-4]: http://www.php-fig.org/psr/psr-4/
